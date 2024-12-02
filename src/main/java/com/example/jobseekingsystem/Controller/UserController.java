@@ -53,11 +53,11 @@ public class UserController {
         }else return ResponseEntity.status(400).body(new ApiResponse("User not deleted"));
     }
 
-    @GetMapping("/getJobApplication")
+    @GetMapping("/getAllJobApplications")
     public ResponseEntity getJobApplication() {
         return ResponseEntity.status(200).body(userService.getAllJobApplications());
     }
-    @PostMapping("/add")
+    @PostMapping("/applyJobApplication")
     public ResponseEntity applyForJobApplication(@RequestBody @Valid JobApplication jobApplication, Errors errors) {
         if (errors.hasErrors()) {
             return ResponseEntity.status(400).body(errors.getFieldError().getDefaultMessage());
@@ -65,8 +65,8 @@ public class UserController {
         userService.applyJobApplication(jobApplication);
         return ResponseEntity.status(200).body(new ApiResponse("jobApplication sent successfully"));
     }
-    @DeleteMapping("/delete/{id}")
-    public ResponseEntity deleteJobApplication(@PathVariable Integer id) {
+    @DeleteMapping("/withdrawJobApplication/{id}")
+    public ResponseEntity withdrawJobApplication(@PathVariable Integer id) {
         Boolean isDeleted = userService.withdrawJobApplication(id);
         if (isDeleted) {
             return ResponseEntity.status(200).body(new ApiResponse("jobApplication withdraw successfully"));
