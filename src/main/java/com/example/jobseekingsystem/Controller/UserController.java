@@ -59,11 +59,13 @@ public class UserController {
     }
     @PostMapping("/applyJobApplication")
     public ResponseEntity applyForJobApplication(@RequestBody @Valid JobApplication jobApplication, Errors errors) {
-        if (errors.hasErrors()) {
-            return ResponseEntity.status(400).body(errors.getFieldError().getDefaultMessage());
-        }
-        userService.applyJobApplication(jobApplication);
-        return ResponseEntity.status(200).body(new ApiResponse("jobApplication sent successfully"));
+        Integer num = userService.applyJobApplication(jobApplication);
+        return switch (num){
+            case 0 -> ResponseEntity.status(201).body(new ApiResponse("Application added"));
+            case 1 -> ResponseEntity.status(400).body(new ApiResponse("user id not found"));
+            case 2 -> ResponseEntity.status(409).body(new ApiResponse("jobPost id not found already exists"));
+            default -> ResponseEntity.status(400).body(new ApiResponse("Application not added"));
+        };
     }
     @DeleteMapping("/withdrawJobApplication/{id}")
     public ResponseEntity withdrawJobApplication(@PathVariable Integer id) {

@@ -1,8 +1,10 @@
 package com.example.jobseekingsystem.Service;
 
 import com.example.jobseekingsystem.Model.JobApplication;
+import com.example.jobseekingsystem.Model.JobPost;
 import com.example.jobseekingsystem.Model.User;
 import com.example.jobseekingsystem.Repository.JobApplicationRepository;
+import com.example.jobseekingsystem.Repository.JobPostRepository;
 import com.example.jobseekingsystem.Repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -15,6 +17,7 @@ public class UserService {
 
     private final UserRepository userRepository;
     private final JobApplicationRepository jobApplicationRepository;
+    private final JobPostRepository jobPostRepository;
 
     public List<User> getAllUsers() {
         return userRepository.findAll();
@@ -47,8 +50,19 @@ public class UserService {
     public List<JobApplication> getAllJobApplications() {
         return jobApplicationRepository.findAll();
     }
-    public void applyJobApplication(JobApplication jobApplication) {
-        jobApplicationRepository.save(jobApplication);
+    public int applyJobApplication(JobApplication jobApplication) {
+        for (User user : userRepository.findAll()) {
+            if (jobApplication.getUserId().equals(user.getId())) {
+                for (JobPost jobPost: jobPostRepository.findAll()){
+                    if (jobApplication.getJobPostId().equals(jobPost.getId())) {
+                        jobApplicationRepository.save(jobApplication);
+                        return 0;
+                    }
+                }
+                return 2;
+            }
+        }
+        return 1;
     }
     public Boolean withdrawJobApplication(Integer id) {
         JobApplication oldJobApplication = jobApplicationRepository.findById(id).get();
